@@ -83,6 +83,11 @@
 %% end of the preamble, start of the body of the document source.
 \begin{document}
 
+<<init, echo=FALSE>>=
+load("data/paper-data.RData")
+@
+
+
 %%
 %% The "title" command has an optional parameter,
 %% allowing the author to define a "short title" to be used in page headers.
