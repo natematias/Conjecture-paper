@@ -429,6 +429,13 @@ After the baseline period ended and the randomized trial began, eighty percent o
 
 Overall
 
+\begin{figure}[h]
+\includegraphics[width=0.8\textwidth]{figures/trial.results.pdf}
+\caption{95\% confidence intervals of the average treatment effects on screen time of turning one's screen grayscale, computed through non-parametric bootstrap methods.}
+    \label{fig:effect_minPerDay}
+\end{figure}
+
+
 % Observer effects constitute one substantial risk to $N$-of-one trials. Observer effects occur when the experience of the experiment itself changes people's behavior, independently from the intervention. To investigate possible observer effects in the Conjecture system, we asked participants to collect one week of baseline data before starting random assignment. In a random intercepts interrupted timeseries regression model, we found that participants spent 29 more minutes on their phones during the baseline period, on average, than 
 
 \subsection{Learning about $N$-of-one trials from the Gray Phone Challenge}
