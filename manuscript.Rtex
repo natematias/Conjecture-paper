@@ -46,18 +46,16 @@
 %% values in them; it is your responsibility as an author to replace
 %% the commands and values with those provided to you when you
 %% complete the rights form.
-\setcopyright{acmcopyright}
-\copyrightyear{2018}
-\acmYear{2018}
-\acmDOI{10.1145/1122445.1122456}
+%% TODO: UPDATE IF ACCEPTED
+
+%\setcopyright{acmcopyright}
+%\copyrightyear{2022}
+%\acmYear{2022}
+%\acmDOI{10.1145/1122445.1122456}
 
 %% These commands are for a PROCEEDINGS abstract or paper.
-\acmConference[Woodstock '18]{Woodstock '18: ACM Symposium on Neural
-  Gaze Detection}{June 03--05, 2018}{Woodstock, NY}
-\acmBooktitle{Woodstock '18: ACM Symposium on Neural Gaze Detection,
-  June 03--05, 2018, Woodstock, NY}
-\acmPrice{15.00}
-\acmISBN{978-1-4503-XXXX-X/18/06}
+%\acmConference[FACCT]{ACM Conference on Fairness, Accountability, and Transparency}{}{}
+
 
 
 %%
@@ -91,7 +89,9 @@ load("data/paper-data.RData")
 %%
 %% The "title" command has an optional parameter,
 %% allowing the author to define a "short title" to be used in page headers.
-\title{The Name of the Title is Hope}
+\title{Automating $N$-of-one Trials for Community Science Investigations into Technology Use}
+
+%% Experiment plan for this paper: https://osf.io/gdakx/
 
 %%
 %% The "author" command and its associated commands are used to define
@@ -103,6 +103,7 @@ load("data/paper-data.RData")
 \email{nathan.matias@cornell.edu}
 \orcid{0000-0001-8910-0208}
 \author{Eric Pennington}
+\orcid{0000-0002-9149-4485}
 \authornotemark[1]
 \email{eric.pennington@civilservant.io}
 \affiliation{%
@@ -112,14 +113,14 @@ load("data/paper-data.RData")
   \country{USA}
 }
 
-\author{Zenobia Chan}
+\author{Zenobia T. Chan}
 \orcid{0000-0003-0130-5204}
 \affiliation{%
-  \institution{Princeton University}
+  \institution{Department of Politics, Princeton University}
   \city{Princeton}
   \state{NJ}
   \country{USA}}
-\email{larst@affiliation.org}
+\email{zeno@princeton.edu}
 
 %%
 %% By default, the full list of authors will be used in the page
@@ -133,7 +134,12 @@ load("data/paper-data.RData")
 %% The abstract is a short summary of the work to be presented in the
 %% article.
 \begin{abstract}
-  ABSTRACT TODO
+As public trust in technology companies has declined, people continue to wonder about the effects of digital technologies in their lives. In this context, many evidence-free claims from tech critics and industry PR substantially influence consumer behavior. How can members of the public make evidence-based decisions about digital technology in their lives? In medicine, $N$-of-one trials have provided a way for patients to make personalized discoveries about managing chronic health conditions. Similar methods could help community scientists understand and manage how they use digital technologies. In this paper, we introduce Conjecture, a system for coordinating $N$-of-one trials that can guide personal decisions about technology use and contribute to science. We describe $N$-of-one trials as a design challenge and present the design of the Conjecture system. We also evaluate the system with a field experiment that tests folk theories about the influence of colorful screens on alleged phone addiction. We present findings on the design of of $N$-of-one-trial systems based on submitted data, interviews, and surveys with 27 participants. Taken together, this paper introduces $N$-of-one trials as a fruitful direction for computer scientists designing of industry-independent systems for evidence-based technology governance and accountability.
+
+%- How many people signed up (27)
+%- How many people completed (14)
+%- How many screen minutes in total are represented in the study
+
 \end{abstract}
 
 %%
@@ -182,34 +188,286 @@ load("data/paper-data.RData")
 \maketitle
 
 \section{Introduction}
+In 2018, when New York Times readers opened their apps and Friday edition to an article about phone addiction, many wondered if they were spending too much time using their phones---and what they could do about it. The article shared advice for finding out and managing this alleged addiction: change the phone to grayscale ``to make the glittering screen a little less stimulating'' \cite{bowles_is_2018}.
+
+As public trust in the technology industry declines \cite{smith_how_2018}, the public are increasingly developing and voicing theories about the risks of technologies in our lives. Public figures often propose actions that people can take to manage those risks and achieve our technology goals. Since these proposals are often as speculative as corporate PR, people are left without an evidence base for personal technology decisions.
+
+Scientists often struggle to answer the public's practical questions about technology use. First, technology firms are often indifferent or resistant to independent research \cite{whittaker_steep_2021}. Second, many of people's most pressing questions are about effects that vary for different people. Does social media negatively impact mental health? It depends \cite{orben_association_2019}. Does more screen time lead to problems for children? It depends \cite{przybylski_how_2020}. When scientists struggle respond to these simple, practical questions about heterogenous effects, companies can dodge regulation, scientists can waste time in a hall of mirrors, and the public can become vulnerable to misinformation on important life questions \cite{orben_sisyphean_2020}.
+
+Scientists have faced similar challenges in other fields, including chronic illness, sports psychology, and education \cite{mirza_history_2017}. While generalizable medical science can offer some help to a person with migraines or diabetes, they must also become an expert in their own version of a condition and identify which interventions work best for them. Many of people's technology use concerns are similar, requiring what some psychologists describe as a ``Goldilocks'' process of identifying how much is too much, how much is too little, and what is ``just right'' for them \cite{orben_association_2019}. 
+
+In medical science, researchers use $N$-of-one trials to support people's self-exploration toward answers that work for them. In these community science field experiments, participants conduct a time-series experiment in their own lives, randomly assigning a treatment to different moments or periods and measuring the outcomes. For example, someone with a food allergy might randomly assign a certain ingredient into their diet. Someone with asthma might randomly assign different therapeutic treatments at key moments to observe the outcome on their respiratory health \cite{guyatt_determining_1986}. To community scientists, the study's value derives from how well it is personalized to the person conducting it. Scientists also benefit from these studies by meta-analyzing the results together in a search for ways to explain differences in treatment effects \cite{smith_single-case_2012, kravitz_design_2014}.
+
+Might $N$-of-one trials help people make personal discoveries about their own technology use while also contributing to science? And how can we design software systems to efficiently support this kind of inquiry? In this paper, we present Conjecture, a system for automating $N$-of-one trials on technology use. The Conjecture system coordinates to common functions of any $N$-of-one trial system, including recruitment, consent, customization, participation, and personalized reporting. In this paper, we introduce the general design challenge of creating $N$-of-one trial systems for consumer protection, within a wider design area of community science research systems. We also describe the design choices and architecture behind the Conjecture system. We then present a case study in the use of Conjecture by reporting on the Gray Phone Challenge, an $N$-of-one trial in which  \Sexpr{length(unique(gpc.df$user_id))} participants tested popular ideas about screen time and phone addiction. We conclude with a discussion of lessons for designers of other $N$-of-one trial systems for technology accountability.
+
+\section{The Problem of Variation in Effects Related to Technology Safety}
+
+Scholarly debates about the risks of social technology routinely struggle with problems of variation and heterogeneity common to all technology safety questions \cite{johannes_how_2021}. While a technology might be safe on average, there might be some situations or people for whom it is harmful. On those issues, studies to detect or remedy harms may also fail to observe effects that are consequential in some contexts. Even when the effects of a technology on average are not harmful, a sizable number of people could experience serious, frequent problems that more general studies cannot observe \cite{odgers_smartphones_2018}.
+
+Johannes and colleagues explain this problem by illustrating a normal distribution of treatment effects from a particular technology \cite{johannes_how_2021}. Even when the effect of a technology may be beneficial on average, a technology with wide variation in individual effects may still cause substantial harm for a large number of people (Figure \ref{fig:variance}).
+
+\begin{figure}[h]
+\includegraphics[width=0.5\textwidth]{figures/johannes.et.al.png}
+\caption{How technologies with positive, high-variance average treatment effects can still have negative effects for many \cite{johannes_how_2021}. }
+    \label{fig:variance}
+\end{figure}
+
+In a classic between-subjects experiment design, researchers would hypothesize possible mediators of a technology's effects and include those mediators in their study designs \cite{gerber_field_2012}. For confirmatory research, the search for mediators relies on the ability of researchers to predict which variables mediate the average treatment effect. For exploratory research, the search for mediators across hundreds of survey items can yield false positives due to the multiple comparisons involved in the process \cite{orben_association_2019}. Both approaches are limited by the variables that were recorded and by the limitations of the sample. If a marginalized group is under-represented or un-measured in research, as is often the case in social science and human-computer-interaction \cite{henrich_weirdest_2010,linxen_how_2021}, scientists could become wrongly convinced that consequential harms do not exist.
+
+Variation in technology behavior also creates a problem for between-subjects experiments to evaluate the potential harms of technology. Studies seeking to observe the harms of systems that behave differently in different contexts for different people \cite{ekstrand_fairness_2021}, are testing a multiverse of technology interventions rather than a single one. Since the behavior of even the most simple social technologies can change from day to day, researchers have questioned whether it is ever possible to discover generalizable knowledge about adaptive systems' effects in people's lives \cite{kitchin_thinking_2017}. 
+
+% Effective endeavors for technology safety rely on combinations of generalizable and context-specific knowledge. Consider for example the challenge of governing automotive safety. General knowledge about the physics of objects in motion informs standards for crash-testing mass produced vehicles. Due to consistency in manufacturing processes and the laws of physics, a small number of tests can be used to predict the general safety of a single car model and evaluate the effectiveness of design changes on average. Yet these general tests cannot fully account for all variations in manufacturing, maintenance, driver behavior, and road conditions. Nor can the results of a crash test help someone decide if their individual vehicle is safe to drive on a given road. To address these context-specific risks, automotive safety policies require regular inspections of individual automobiles and road surfaces. When combined, both generalizable and context-specific knowledge inform technology safety.
+
+% Reliable knowledge on technology safety is particularly challenging to develop for communication technologies whose uses vary by social context. Concerns about communication technology addiction illustrate those challenges clearly. 
+
+How can researchers identify and address genuine harms that might not be observable through probabilistic surveys and large-scale data analyses? Johannes et al suggest a cycle of empirical investigation common in environmental community science and consumer protection research---a cycle that starts with qualitative evidence that is validated through n-of-one trials or case studies and finally incorporated into large-scale attempts at generalizable knowledge \cite{johannes_how_2021}.
+
+\section{Testing Products With Community Science}
+
+In consumer and environmental protection, community science (sometimes called citizen science \cite{noauthor_why_2018}) offers context-situated evidence that can inform policy and contribute to generalizable knowledge \cite{bonney_citizen_2012}. When applied to questions about the individual and context-specific harms of technology, industry independent community science may help identify heterogenous treatment effects undetectable through larger aggregate studies.
+
+Some of the earliest industry-independent industry-independent consumer protection research was pioneered in 19th century London by Friedrich Accum, who used microscopes to detect adulterations in the food supply \cite{coley_fight_2005}. In the U.S. the women's membership organization and magazine Good Housekeeping crowdsourced funds to create a food testing lab whose team later founded the U.S. Food and Drug Administration \cite{goodwin_pure_2006}. In the 20th century, communities organized public-interest research through Consumer Reports (product safety) \cite{maynes_test_1984} the Cornell Lab of Ornithology (biodiversity) \cite{bonney_citizen_2012}, and many environmental citizen science organizations (pollution and public health) \cite{dietz_struggle_2003, rey-mazon_public_2018, liboiron_pollution_2021}.
+
+Community science is only possible in the presence of scientific processes that enable public participation in creating knowledge \cite{shirk_public_2012}. Food safety research relies on widely-available microscopes and chemical tests. Biodiversity research depends on volunteers who keep lists of the species they observe \cite{cooper_citizen_2007}. Environmental community science involves the public in collecting samples of air, water, and soil. While many scientific tests are designed to differentiate between scientists and the public \cite{shapin_leviathan_2011, cohen_analysis_2011}, research methods for community science are designed to enable public participation in hypothesis generation, research procedures, and analysis \cite{shirk_public_2012}. 
+
+In recent years, computer scientists and social scientists have created software systems for industry-independent community science about our digital environments. Researchers and journalists have enlisted the public to audit decision-making algorithms \cite{matias_software-supported_2021, le_pochat_audit_2022}, monitor network censorship \cite{filasto_ooni_2012, burnett_encore_2015}, monitor advertising practices \cite{noauthor_citizen_2020, merrill_what_2018}, monitor compliance with privacy law \cite{waddell_californias_2021}, identify failures in platform safety policies \cite{matias_reporting_2015}, test behavioral interventions \cite{matias_civilservant_2018, kovacs_habitlab_2019}, and collaborate on hypothesis testing about collective behavior \cite{matias_going_2016}.
+
+Community science systems that focus on observation and data collection in digital environments cannot answer questions posed by Johannes et al about the safety of technologies or the effectiveness of safety interventions. These systems predominantly focus on descriptive research rather than questions about cause and effect. The one system for causal inference that does support industry-independent research \cite{matias_civilservant_2018} can only reliably observe harms or positive effects at the margins of a distribution when those impacts are anticipated by researchers. A more complete evidence-based on technology safety would require causal evidence at the level of individuals.
+
+%Overall, community science has long been a powerful way to inform personal decisions, contribute to policy and advance general science through situated knowledge at the level of communities and individuals.
+
+%One way to identify effective harms and remedies for individuals is to conduct $N$-of-one-trials, where individuals carry out procedures that generate evidence on cause and effect in 
+
+\section{Individual-Level Causal Evidence with $N$-of-one Trials}
+$N$-of-one trials are designed to answer causal questions about individuals that between-subjects study designs cannot answer. In $N$-of-one trials, individuals take a series of randomly-assigned interventions across some part of their lives that can be randomized, such as events, locations, relationships, or time periods. Individuals also take repeated measurements for each unit that receives randomization. Since the experiment randomizes an intervention within that person's life, the average treatment effect applies directly to that person.
+
+From the earliest recorded 17th century crossover medical trials and 19th century psychology studies to the present day, researchers have turned to $N$-of-one trials whenever rare cases and individual treatments are a greater priority than average outcomes \cite{mirza_history_2017}. In the 1950s, the anti-eugenicist bio-statistician Lancelot Hogben first formalized N-of-one trials, as an alternative to the ``Tyranny of the averages'' created by eugenicist statistician RA Fisher \cite{hogben_self-controlled_1953}. As a statistician, Hogben observed the problem that a focus on averages emphasized populations over individuals and emphasized group differences over individual needs---the same frame of reference he questioned about eugenics \cite{tabery_commentary_2011}. Today, researchers adopt single-case experiment designs in areas of health where the needs of scientific discovery overlap with pragmatic individual needs, including clinical care \cite{nikles_establishment_2021}, and areas of psychology that serve individual clients such as sports, education, and counseling \cite{barker_single-case_2011, smith_single-case_2012}.
+
+$N$-of-one trials are only methodologically appropriate when certain basic conditions are met. To achieve sufficient statistical power, the intervention needs to be something that could be tested many times. As with any randomized trial, $N$-of-one trials need to satisfy the stable unit treatment value assumption---the expectation that potential outcomes for a given observation respond only to its own treatment status \cite{gerber_field_2012}. For experiments that randomize interventions to different time periods, researchers either need to operate in domains where treatment in previous periods does not affect observations in later ones, or they need to model that influence in their analysis. For example, $N$-of-one trials have been used to test short-term asthma treatments for people who experience symptoms daily \cite{guyatt_determining_1986}.
+
+Because $N$-of-one trials are often integrated into people's daily lives, they exhibit the external validity common to field experiments. Yet since many $N$-of-one trials are self-managed by participants, researchers need to design studies carefully to preserve their internal validity. Participants may struggle to complete the research procedures from poorly-designed studies, creating compliance problems if the procedure is too complex. In cases where placebo effects or demand effects are a risk, researchers need to account for those possible threats to validity as well \cite{hogben_self-controlled_1953, kravitz_design_2014}.
+
+Since individual $N$-of-one-Trials do not constitute attempts to contribute to generalizable knowledge, one could make a hypothetical argument that they are not governed by the U.S. Common Rule. In practice, scholarship on $N$-of-one-Trials emphasizes the importance of informed consent, the freedom to withdraw at any time, and other ethical norms in human subjects research \cite{kravitz_design_2014}. As with all research conducted in the field, thorough literature reviews and meta-analyses are essential ethical practices. Methodologists emphasize that single case experiments should only be adopted in situations with genuine equipoise---where the outcome of the experiment cannot be easily predicted in advance. Researchers should not withold a clearly beneficial treatment or administer a clearly harmful intervention as part of any experiment, including $N$-of-one-Trials \cite{kravitz_design_2014}.
+
+\section{Software for supporting $N$-of-one-Trials}
+All $N$-of-one trials involve a common set of administrative and communication activities that create the user experience of participating in a study. In the 1950s, researchers employed participant liasons blinded to study details who could communicate with participants, provide treatments, and retrieve observations \cite{hogben_self-controlled_1953}. In the 190s, the University of X established a n ``N of 1 Service.'' This administrative unit helped clinicians develop experiment designs, bundled treatments and placebos into standard delivery mechanisms, conducted the study with staff who were blinded to the study design, collected data, and assisted with analysis \cite{guyatt_determining_1986}.
+
+In recent years, medical researchers have created $N$-of-one mobile applications that conduct many of the procedures formerly carried out by human research liaisons \cite{estrin_open_2010}. In some cases, participants also use the apps to select which treatments to test in the trial, in conversation with a doctor \cite{kravitz_effect_2018}. Researchers collaborate with care providers to recruit and enroll people into studies using these apps. Since many $N$-of-one trials rely on self-reported survey outcomes on hard to measure constructs such as pain or symptom severity, these apps also provide surveys and diary features. In some cases, they are also able to directly measure the outcomes of interest \cite{estrin_open_2010}.
+
+Software systems for $N$-of-one trials also provides participants and their clinician with information about the result of their trial. Since the purpose of the trial is to inform participant decision-making, experiment software often includes custom statistical models and illustrations of a person's study results, sometimes incorporating aggregate data from others \cite{kravitz_effect_2018}.
+
+%\section{Designing Conjecture, a System for $N$-of-One Trials on Digital Life}
+
+\section{Design Considerations for $N$-of-One Trial Software}
+In this paper, we report the design of \emph{Conjecture}, a software system that supports people to conduct $N$-of-one trials on questions related to their digital lives. We share general design considerations for any such software system, followed by a description of the system itself.
+
+In N-of-one trial systems, software takes on some of the activities that have typically been carried out by scientists and research bureaucracies. The software also supports participants to take on some of those tasks as well. When designing these systems, what issues do the designers of any $N$-of-one trial software system need to consider?
+
+\subsection{Research Literacy}
+Standard research ethics regulations require scientists to explain the procedure well enough for someone to consent. For N-of-one trials, participants need to understand the procedure even more clearly than is typically required. Because participants in N-of-one trials personally carry out the research procedure in their own lives, the validity of an experiment depends on a person's ability to understand and reliably carry out the research procedure. Consequently, any N-of-one trial software system will need to provide features that inform participants about the study design, the potential risks and benefits of conducting the study, and the effort that the study will require of them.
+
+Pragmatically, systems need to present people with information pages that contain all of the information necessary to make an informed decision about whether to participate. This information includes a description of the study, the purpose of the research, and a description of what will happen at each stage of the self-experiment. The software also needs to record a person's consent to participate before allowing them to continue. Since people's information needs evolve over the course of a study, designers should consider how to provide ongoing access to advice from researchers, university IRB, or independent ethics hotlines.
+
+\subsection{Participant Autonomy}
+In research ethics conversations, the principle of autonomy often applies to a person's decision to participate in a study and their decision to withdraw. Designers of software for N-of-one trials should consider these rights when designing systems. %Autonomy in N-of-one trials can also mean much more than simply the right to refuse or withdraw participation in a study. 
+Pragmatically, software systems should allow people to withdraw their consent to participate at any time, halting all interactions and attempts to collect data. Designers should also consider whether withdrawal applies to past data already collected in the study.
+
+\subsection{Personalization}
+Because N-of-one Trials are conducted within a single person's life, they can be customized by that person in many ways. Consider for example the question of timing. In a more common between-subjects experiment, researchers enroll participants at roughly the same period of time and wait to compute results until all participants have completed the study. In an N-of-one trial, participants can start and end the study independently of other people. 
+
+N-of-one trials also permit participants to customize details of the study procedure, such as what treatment is tested, what time they administer a treatment, what time they make measurements, and even the context and details of where a treatment is applied.  At the same time, some customizations might reduce the validity of the final results, especially if changes are made partway through a study.
+
+Pragmatically, designers of software systems can enable participants to carry customizations in ways that preserve and even improve the internal validity of the study. For instance, not everyone conducting an experiment in their life will be able to carry out interventions at the same time of day. They may have different work schedules, sleep schedules, or even live in different timezones. System designers can invite participants to control some parameters of the study to best fit the interventions into their lifestyle. If customizations improve the convenience and realism of the study, they can increase a person's chance to complete it and make the study even more true to life.
+
+\subsection{Integrity and Compliance}
+The internal validity of any experiment depends on how well the study procedure was carried out \cite{cook_experimental_2002}. In an N-of-one trial, participants bear the responsibility to ensure that interventions are being performed in a timely manner and that the procedure is being followed reliably---what methodologists call compliance \cite{gerber_field_2012}. If interventions and measurements are performed incorrectly, at an incorrect time, or skipped, the results may become compromised.
+
+To help people achieve their goals for a study, software designers should include features that help people keep on track and mitigate the impact of any deviations from the research plan. Life is complicated. Participants may not always prioritize the experiment or remember the study procedures. Designers can improve the integrity of studies in several ways. Reminders can help participants comply with study procedures. Regular requests for data can improve the fidelity of measurement and reporting. For studies with actions that participants may forget to undertake, software systems can record information about noncompliance so it can be accounted for in the final analysis.
+
+\subsection{Interpretation}
+In a between-subjects experiment, researchers rather than participants interpret the results. While some medical $N$-of-one trials require medical expertise to interpret, participants traditionally take a very active role in making sense of their own findings. Participants know much more than researchers about their own context and they are the ones who will ultimately make decisions based on that knowledge. For that reason, $N$-of-one trials typically end with a conversation between a clinician and the participant to make decisions together \cite{mirza_history_2017}. The costs of this staff time may partially explain why N-of-one trials have not become more widespread.
+
+Software designers have even more options for supporting participants to interpret their own study results. Whether the experiment software provides participants with ongoing information or a final report at the end, many of these functions can be automated. With automated results, participants can receive findings immediately and scientists can gain standardized access to findings across a large number of participants. 
+
+As with every other part of N-of-one trials, designers need to consider participant literacy. If final reports do not clear, simple instructions on how to make sense of the findings, the study will have limited value to participants.
+
+Software and study designers also need to consider how participants will interpret their own results when deciding what statistical tests to use for $N$-of-one trials. Many researchers have used Bayesian statistics and 95\% credible intervals rather than frequentist hypothesis tests, under the impression that participants can more easily interpret bayesian statistics \cite{kravitz_effect_2018, kravitz_design_2014}.
+
+% TODO: say something about qualitative impressions? Finally, because participants have direct, daily experience with the study, N-of-one trial designers and software system designers
+
+%\subsection{Interference and Demand Effects}
 
 
-\section{Testing People's Concerns about Technology}
 
+\section{Conjecture, A System for $N$-of-one Trials on Digital Life}
+We created the software system Conjecture to support $N$-of-one trials for community science on digital life. While we had a specific study in mind when designing the system, we created an architecture that can in principle support multiple study designs. Here we describe the general user experience of interacting with Conjecture and the system architecture.
 
-%%% TBD: determine if this is its own section or a subsection somewhere
-\section{The Role of Color in Phone Addiction}
+\subsection{User Experience}
+The Conjecture system has two kinds of users. Community science participants need to learn about the study, carry out the $N$-of-one trial successfully, and receive reliable results.  Researchers need to be able to define studies, create a consistent user experience for participants, report results to them, and produce scholarly research---all in compliance with ethics regulations.
 
+Community science participants take their first step when they visit a webpage served by Conjecture that describes the study and invites them to participate. If they choose to continue, the system presents them with an onboarding and consent form designed by the researchers. Since Conjecture uses text messages and emails for communication with participants, the form also requests contact information. The system also invites participants to customize the study by suggesting the best times for measurements and interventions. Participants are also given access to video training during the enrollment process.
 
-\section{N-of-One Trials}
+Because $N$-of-one trials vary widely in how the study is structured, Conjecture provides researchers with a set of general components needed in any study, components that combined into a specific study design. In a study where interventions are randomized over time, a participant could receive regular messages informing them about what intervention to take, asking if they completed the intervention, and requesting data donations. Participants would receive these communications on the schedule that they specified when customizing the study to fit their lives.
 
+After participants complete the full study, they receive a message notifying them that they have completed the study and requesting any final data donations. Once that data has been received, if the researchers have pre-registered the code for analysis and reporting, the Conjecture system can send them their results.
 
-\section{Design Considerations}
+\subsection{Software Components}
+Conjecture is designed to offer researchers the greatest possible flexibility in the design of studies. For that reason, the system provides a series of components that researchers can use through a combination of custom software development and off-the-shelf products. The system is written in Python with some researcher-facing components implemented in R. Conjecture stores data in MySQL, with a set of YAML configuration files for customizing a given study. The system can host multiple studies at once, providing a different web address for each study.
+
+To interact with participants over the web, Conjecture can publish secure, privacy-protecting web forms that are integrated into the study experience. By hosting forms directly from the system, Conjecture is able to comply with ethics regulations and provide participant privacy at a level not provided by commonly-used public forms services. By hosting forms directly, Conjecture can also incorporate form responses into the participant user experience. After researchers create the design of their forms in Google Forms, the Conjecture system imports that design into an internal database which it uses to serve forms directly to users independently from Google. The form component permits researchers to use a common form authoring system while avoiding Google servers, which some universities have not authorized for storing sensitive human subjects data. Conjecture can also host web pages authored by researchers.
+
+Conjecture also provides components for two-way messaging over text and email. The system can send messages on a schedule, support simple back-and-forth interactions with participants, and receive data donations from participants. Many of the messaging details are defined in the custom logic for a specific study.
+
+Conjecture also provides general components for common study needs. For example, the system provides a service for generating randomizations when a new participant signs up. Randomizations can be provided by researchers in a static CSV file or generated dynamically every time someone new signs up for the study. The system also provides data storage and processing features that parse data donations, record participant data, record any technical errors in a manner that can be addressed in the analysis, and generate datasets used to create final participant reports.
+
+\begin{figure}[h]
+\includegraphics[width=0.7\textwidth]{figures/2022-system-architecture.001.png}
+\caption{System Architecture for Conjecture, software that supports N-of-One Trials}
+    \label{fig:conjecture}
+\end{figure}
+
 % In this section, we explain what an N of one Trial system needs to be able to do
+% TODO: re-use one of our diagrams
 
-\section{SYSTEM NAME HERE}
-% Describe how the system works, explain the user experience, summarize the components, include software architecture notes, etc
+% Consent and enroll participants to start on their own pace
 
-\section{The Gray Phone Challenge: Evaluating SYSTEM NAME}
-% describe the the study
+% Provide guidance and feedback on participating effectively
 
-% report the kinds of results people received
+% Confirm compliance
 
-% report some of the challenges people faced. This will point back to the design considerations
+% Collect data
+
+% Provide results 
+
+% Debrief participants
+
+
+\section{The Gray Phone Challenge: Evaluating the Conjecture System}
+How can researchers evaluate research software for community science and technology accountability? To evaluate Conjecture in this early stage, we adopt methods from research on experiment system design and critical infrastructure. In computer science, papers about early-stage experiment systems report design considerations, describe system implementation, summarize early experiments, and discuss system adoption by stakeholders \cite{kohavi_online_2013, pandey_gut_2017, fabijan_evolution_2017, bakshy_designing_2014, daskalova_lessons_2017, matias_civilservant_2018}. Research on critical infrastructures is typically evaluated in terms of the critical perspectives that are surfaced through the process of designing and adopting a system \cite{irani_turkopticon_2013, irani_critical_2014}. In this paper, we evaluate Conjecture in both ways. We describe the Gray Phone Challenge, an $N$-of-one trial implemented with the Conjecture system, report on the findings of 27 participants, and report on their experience. We conclude by discussing Conjecture as a critical infrastructure that re-makes assumptions about who matters and who has power in technology accountability research.
+
+\subsection{Investigating the Role of Color in Alleged Phone Addiction}
+Because people experience color differently, $N$-of-one trials are well suited to investigate popular claims about the role of bright colors in alleged phone addiction. Technology accountability advocates argued that bright colors were causing phones to function like slot machines---attracting and distracting people's attention for profit \cite{bowles_is_2018}. To reduce the distracting power of color screens and reveal the power of companies to influence their own minds, advocates encouraged consumers to convert their phone screens from color to grayscale \cite{Mikel2018}. 
+
+% Use of the Internet and mobile phones has dramatically increased in recent decades. Each American adults (age 18 or above) spends an average of 2 hours 51 minutes on their smartphone every day \cite{comScore2018}. While new technology brings about convenience and leisurely enjoyment, the negative health consequences accompanying the increasing use of mobile phones in some countries have ``reached the magnitude of a significant public health concern'' \cite{WHO2018a}. Research in psychiatry suggests that excessive use of the Internet and gaming are behavioral addictions that ``resemble substance addictions in many domains, including natural history, phenomenology, tolerance, comorbidity, overlapping genetic contribution, neurobiological mechanisms, and response to treatment'' \cite[233]{grant_introduction_2010} (see also \cite{weinstein_computer_2010, weinstein_internet_2010}). In the 11th International Classification of Diseases (ICD), excessive digital gaming has been classified as a disorder due to addictive behaviors \cite{WHO2018b}.
+
+Can a grayscale phone screen cause people to reduce the amount of time they spend using their phones? We used the Conjecture system to design an $N$-of-one trial to test the effects of a grayscale screen on people's screen time. This question is well-suited to single case experiments. First, effects related to device use and screen time might vary between individuals \cite{johannes_how_2021}. Second, people who worry about their own screen time might have sufficient motivation to follow a study procedure over an extended period. Third, single case experiments might help researchers identify common conditions such as color-blindness that could mediate the effects of colorful screens on phone usage. Finally, the color-addiction hypothesis expects that the effects are instantaneous and short in duration; proponents do not argue that turning one's phone gray for one day will have an effect on behavior the next day or the next week.
+
+\subsection{Procedure}
+We held the Gray Phone Challenge between August and October 2018. Throughout the study, participants could access a private Facebook group, where they could ask questions regarding the study and seek support from the researchers. 
+
+We recruited iPhone and Android users by publicizing a recruitment post on Twitter and Facebook. In the posts we made a special appeal for participation from people who have been diagnosed with any form of colorblindness. A link in the post directed the participants to a webpage where further details of the study were provided. At the end of the webpage, we asked the participants to provide explicit consent to participate in the study. The participants who consented to participate in the study were directed to the initial survey (see Appendix \ref{app:presurvey} for details), where they answered socio-demographic questions, completed a test for color vision \cite{birch_efficiency_1997}, answered questions about how they used their phone, and recorded predictions for how a grayscale screen might affect their screen time if at all. In the initial survey, participants could choose (1) whether they would like to receive our instructions through SMS, email, or both, and (2) what time of the day they would like to receive the instructions. We sent participants who completed the baseline survey with instructions on how to use (1) the screen time data tracking apps we use in this study (Moment and App Usage), and how to (2) submit the collected data.
+
+Participants installed the Moment or AppUsage software to record three dependent variables related to screen time. While psychologists have argued a mismatch between screen time and people's substantive concerns about technology use, public concern about mobile phone addiction has centered around screen time and technology companies have promoted screen time as a way to measure ``time well spent'' \cite{k_kaye_conceptual_2020} In this study, participants used apps to record their total screen minutes per day, measured as the number of minutes that the phone was unlocked with the screen on. Participants also recorded the number of ``unlocks,'' a rough measure of how many times they interacted with their phone's screen in a day. We also calculated the minutes per unlock by dividing screen time by the number of unlocks.
+
+\begin{figure}[h]
+\includegraphics[width=0.5\textwidth]{figures/steps.in.the.gray.phone.challenge.notitle.png}
+\caption{Illustration of steps in the Gray Phone Challenge shown to participants}
+    \label{fig:steps}
+\end{figure}
+
+During the first seven days of the study, we collected baseline screen time data. The purpose of this baseline period was to give participants time to become familiar with the study procedures and to collect general descriptive data. During this period, we sent participants daily instructions to confirm that their screen was set to full color. At the end of the seventh day, we asked the subject to share their screen time data with us through email or SMS using a built-in function of the Moment app.
+
+Starting from the eighth day of the study, we randomly assigned participants to set their screen to either grayscale or full color on a daily basis. This random assignment took place at the subject-day level within blocks in a two-day cycle. To maintain the balance of treatment assignment during weekends, we use an accept-reject algorithm to eliminate combinations that have unbalanced assignments during weekends. For details on the randomization procedure, see the experiment pre-registration.\footnote{blinded for review}
+
+%\footnote{\url{https://osf.io/gdakx/}}
+% We will attach a censored version of the pre-analysis plan with the paper
+
+
+\begin{figure}[h]
+    \includegraphics[width=0.5\textwidth]{figures/gray.phone.challenge.daily.routine.png}
+    \caption{Illustration of the daily routine sent to participants}
+    \label{fig:daily.routine}
+\end{figure}
+
+During the 28-day period of the experiment (i.e. from the eighth day to the 35th day of the study), participants received an instruction message asking them to set their phone to grayscale or full color on the day before the study day. For instance, on the seventh day of the study, i.e. the day before the first day of the experiment, at the time designated by a participant, they received a message asking them to set the phone to grayscale or in color the next day. 
+
+As a self-reported compliance check, the instruction message also asked the participant if they set the phone to grayscale or color that day. The participant responded by replying to the message. Regardless of compliance status, participants who responded to the compliance check received a message thanking them for sharing the information and reminding them to set their screen to the assigned color (either grayscale or full color) the next day. Participants who did not respond to the compliance check did not receive any other message from us until the instruction message of the next day. 
+
+Each week in the study (the eighth, 15th, 22nd, 29th, and 36th days) participants were asked to share with us their screen time data by email or SMS using a built-in function of the Moment app. If they did not respond to the data sharing message on the eighth, 15th, 22nd, 29th, or 36th day of the study within 24 hours, they received a reminder message. If they did not respond to the reminder message within 24 hours, a second reminder message was sent. If they did not respond within 48 hours to the second reminder message following up on the data collection message on the 36th day of the study, we considered them to have ended their participation.  
+
+\subsection{Communicating Results}
+
+Upon completion of the study, participants received a report that shared their personal results from the study. To help participants interpret the illustrations, we first showed them what simulated results with a null result would look like, followed by simulated results with positive effects. Finally, we presented their actual, individualized results. 
+
+In all three sets of results, we visualized these results using quantile dotplots  \cite{fernandes_uncertainty_2018}. Because most people's screen time varies widely from day to day, we chose not to present participants with point estimates of the difference in outcome variables between days with gray and color screens. Instead, we presented the distribution of average treatment effects estimated from a non-parametric bootstrap, alongside the resulting 95\% confidence intervals (Figures \ref{fig:effect_minPerDay}, \ref{fig:effect_unlockPerDay}, \ref{fig:effect_secPerUnlock}). 
+
+\begin{figure}[h]
+\includegraphics[width=0.8\textwidth]{figures/effect_minPerDay.pdf}
+\caption{An example of the results on a participant's daily screen time.}
+    \label{fig:effect_minPerDay}
+\end{figure}
+
+
+\begin{figure}[h]
+\includegraphics[width=0.8\textwidth]{figures/effect_unlockPerDay.pdf}
+\caption{An example of the results on a participant's daily number of unlocks.}
+    \label{fig:effect_unlockPerDay}
+\end{figure}
+
+
+\begin{figure}[h]
+\includegraphics[width=0.8\textwidth]{figures/effect_secPerUnlock.pdf}
+\caption{An example of the results on a participant's average duration of unlocks.}
+    \label{fig:effect_secPerUnlock}
+\end{figure}
+
+% The two sets of simulated results help participants make sense of their own results by showing how the distributions of the outcome variable of interest across experimental conditions would differ in the presence and absence of statistically significant treatment effects. In the actual results section, we presented plots for each of the additional outcome variables of daily phone unlocks and screen time seconds per unlock. 
+
+% Further results
+% - people completed $N$-of-one trials that were statistically valid within the design we created, and we were able to provide personalized results
+% - this system helped people test out their hypotheses about screen time, whether or not they believed it
+% - although we did face some attrition, some people did respond to requests for compliance information, improving the quality of our data and inference
+
+\subsection{Gray Phone Challenge Results}
+Twenty-seven people completed the baseline survey and consented to participate. Fourteen of them completed the entire study. Twelve participants completed a post-study survey about their experience of the Gray Phone Challenge. Of the fourteen participants that completed, six had been diagnosed with some kind of colorblindness and twelve used their phone for work in some capacity. Eighty percent of participants reported following the study instructions eighty percent of the time. Three participants completed the full study procedure. The two participants who completed the least of the study missed ten days out of twenty-eight.
+
+Participants varied widely in their screen time and the number of times they unlocked up their phone. During the baseline period, participants unlocked their phones between (X) and (Y) times per day, with an average of (Z). Phone use also varied widely between days for participants. During the week-long baseline period, the standard deviation in pickups ranged from (X) to (Y) and the standard deviation in screen minutes ranged from (A) to (B).
+
+Participants diagnosed with colorblindness differed substantially in their average phone usage from other participants. On average they unlocked their phones (X) more times (p=(Y)) than those without colorblindness, in a regression model that accounted for whether they used their phone for work and whether they used a ``do not disturb'' feature. Participants diagnosed with colorblindness also spent (X) more minutes on their screen per day (p=Y) on average, accounting for the same factors.
+
+
+
+% Observer effects constitute one substantial risk to $N$-of-one trials. Observer effects occur when the experience of the experiment itself changes people's behavior, independently from the intervention. To investigate possible observer effects in the Conjecture system, we asked participants to collect one week of baseline data before starting random assignment. In a random intercepts interrupted timeseries regression model, we found that participants spent 29 more minutes on their phones during the baseline period, on average, than 
+
+\subsection{Learning about $N$-of-one trials from the Gray Phone Challenge}
+
+\textit{Study Validity}
+
+
+\textit{Participant movement across time zones.} In an $N$-of-one controlled trial, participant-day
+Is a common unit of observation. This poses unique challenges when participants travel across time zones and adjust their cell phone usage according to the local time, as one of the 12 respondents highlighted in the post-study survey. In using this system, researchers should develop protocols in treatment assignment and data collection when participants travel across time zones. 
+
+\textit{Frictions associated with self-administration of treatment.} Our system relies on participants to administer the experimental treatments. The nature of such treatments can make a double-blind controlled trial impossible. Specific to the Gray Phone Challenge, administering the treatment, i.e. switching the screen color of the participants’ cell phone, could have contaminated the outcomes of interest by lengthening the participants’ screen time or increasing the number of pick-ups when participants switch the treatment condition. Participants’ actual compliance status might also be a source of measurement error despite the self-reported data on compliance status. 
+
+The self-administration of treatment can also be a deterrent from completing the study, reducing the completion rate of the study. On an 11-point scale from 0 (very difficult) to 10 (very easy), 10 out of the 12 participants in the post-study survey reported an ease of following instructions score of 4 or lower (mean $= 3.25$, lower quartile $= 1$, median $= 3$, upper quartile $= 3.25$). 
+
+\textit{Lack of integrated self-reporting system.} Our system relies on a third-party app to collect data on the outcomes of interest, and the participants to submit the data through emails or text messages. This data submission process can distort the outcome of interest by increasing the screen time of the participants. The friction involved may also increase dropout rate and missing data. A quarter of the participants in the post-survey reported difficulties in returning the data collected by the third-party app. 
+
+\textit{Calculations for within and between statistical power.} In order to provide meaningful individualized results to the participants, we need multiple observations across time periods from the same participant. This is especially important in cases where there is high variation in outcome variables. Since researchers do not have information on the variation in the outcome variable(s) of each participant ex ante, coupled with the huge variations across individuals in the outcome variable(s), it is difficult for researchers to make educated assumptions in conducting power analysis for the study. While a bigger sample size can theoretically overcome this problem, this will inevitably lengthen the study, assuming the same unit of analysis of participant-day, which can increase the attrition rate. 
+
+\textit{Communicating null results.} Almost half of the respondents of the baseline survey (13 out of 27) reported that they believe that turning their screen gray would reduce their screen time. However, the data we collected through this study found only null results at both the individual and aggregated levels. Researchers ought to explain in simple languages what these null results mean and do not mean. For example, the experimental period of the study lasted for only 28 days and at an individual level, there were only 28 observations. The lack of statistically significant results might stem from the lack of statistical power rather than a true absence of effects --- lack of evidence is not the evidence of absence. In general, helping participants understand the statistical analysis can be challenging, especially when people might be more excited by a finding that confirms their concerns.
+
 
 \section{Discussion}
-% Here is where we summarize what it all means for computer science, social science, and society.
+In this paper, we had X and Y goals... We were able to successfully design a system that conducted N-of-one trials, in a way that illustrates these deeper design considerations.... Based on this experience, designers of systems like this should consider the following:
 
+%% Ideas:
+% 1. Autonomy - how much freedom can we give to participants, and how much to automate? If the purpose of an n-of-one trial is to empower participants, how much freedom can we give people while still having high quality inference? How can we take these individual idiosyncracies into consideration when providing a result?
+
+% 2. Suggestion: full automated system might miss important information. Opportunity to include diary like features. Record for themselves and researchers qualitative information about how it's going
+% suggestion: post-study interpretation interview
+
+% 3. Participant time: with something like chronic illness, people have a strong incentive to participate... with something like screen time etc, doing the study might cost them more than either of the tested interventions
+
+% 4. Statistical power question... unit of analysis...
+
+% 5. Null results question - really important for consumer protection research
+
+% 6. Deciding the right balance in methods of communication. Related to autonomy.
+
+% 7.  While $N$-of one trials provide value from personalized results, that personalization could also be a weakness. Write about full-cycle research
+
+% Here is where we summarize what it all means for computer science, social science, and society.
 
 % \section{Acknowledgments}
 
@@ -231,14 +489,12 @@ load("data/paper-data.RData")
 
 % Authors should not prepare this section as a numbered or unnumbered {\verb|\section|}; please use the ``{\verb|acks|}'' environment.
 
-
-%%
 %% The acknowledgments section is defined using the "acks" environment
 %% (and NOT an unnumbered section). This ensures the proper
 %% identification of the section in the article metadata, and the
 %% consistent spelling of the heading.
 \begin{acks}
-To Robert, for the bagels and explaining CMYK and color spaces.
+%This project was funded by the Ethics and Governance of AI Fund. We are especially grateful to the participants who joined in the Gray Phone Challenge. Maximilian Klein provided helpful advice on including Android devices in the study and prototyped software for parsing Android data.  Marc Ratkovic provided statistical advice. We are also grateful to Jason Chin and other colleagues at the Paluck Lab at Princeton University for helping us collect pilot data that informed the design of this study.
 \end{acks}
 
 %%
@@ -250,6 +506,60 @@ To Robert, for the bagels and explaining CMYK and color spaces.
 %%
 %% If your work has an appendix, this is the place to put it.
 % \appendix
+
+\appendix
+
+\section{Pre-survey} \label{app:presurvey}
+
+Available at \url{https://goo.gl/forms/VrESpmjh30bDOE7J3}
+
+\subsection{Messages to subjects} \label{app:messages}
+
+\subsubsection{Baseline: Days 0--6}
+
+\paragraph{Instruction message}
+
+Please set your phone to full color before you sleep or once you get up
+tomorrow.
+
+Did you set your phone to full-color today? Reply Y for yes and N for
+no. To stop receiving these messages, reply STOP.
+
+\paragraph{Thank you and reminder message}
+
+\textit{\textmd{[sent if and only if participant responded to instruction message]}}
+
+That's great -- thanks for letting us know! Remember to set your phone
+to full-color tomorrow.
+
+\subsubsection{Experiment: Days 7--34}
+
+\paragraph{Instruction message}
+
+Please set your phone to {[}assigned: grayscale / full-color{]} before
+you sleep or once you get up tomorrow.
+
+Did you set your phone to {[}assigned: grayscale / full-color{]} today?
+Reply Y for yes and N for no.
+
+To stop receiving these messages, reply STOP.
+
+\paragraph{Thank you and reminder message}
+
+\textit{\textmd{[sent if and only if participant responded to instruction message]}}
+
+That's great -- thanks for letting us know! Remember to set your phone
+to {[}assigned: grayscale / full-color{]} tomorrow.
+
+\subsubsection{Data collection: Days 8, 15, 22, 29, and 36}
+
+Please share with us your screen time data from {[}date of day 1{]} to
+today. Use the Moment app to email us at civilservant.research@gmail.com: Settings \(\rightarrow\)
+Advanced \(\rightarrow\) Export Data.
+
+To stop receiving these messages, reply STOP.
+
+
 
 \end{document}
 \endinput

@@ -1,0 +1,62 @@
+# System Name Brainstorm
+
+Characteristics of a good name:
+* You know what it does from it's name
+* Something short (one or two words)
+* It's easy to pronounce 
+* Memorable acronym
+* Confident
+
+Characteristics of a name for THE SYSTEM
+* Relevant in some way to-of-one trials or experimentation?
+* Relevant in some way to citizen science....?
+
+Example project names that we like:
+* DeclareDesign
+* Mediation
+* ZELIG: https://zeligproject.org/about
+* Gut Instinct: https://pages.ucsd.edu/~mboyle/COGS1/readings/Klemmer-COGS1-Gut-Instinct-2017.pdf
+
+What is an n-of-one-trial and what does it do for people?
+* personalized treatment effects
+* personalized answers on causal questions
+* automatic experiment initiated by an individual 
+* Informing your fears and hopes with evidence
+* Learning about yourself
+* Science of yourself
+* Personalized treatment effect
+* Learn effects for others as well...
+* 
+
+JNM's IDEAS
+* MyScience (best?)
+* ScienceOfUs (taken)
+* MyTrial (mistaken for legal?)
+* Science of One
+* Self Discovery
+* Self Explorer (Eric top)
+* Evidence and Me
+* Hard Boyle
+
+Zenobia's Ideas
+* ouRCT (Eric likes)
+* Nof1: (exists) https://nof1.com/
+* ourTrial
+* weExpt wexperiment
+* N1 (JNM likes)
+* know thyself (JNM top) (Eric top) (Zenobia top)
+  * https://dl.acm.org/doi/10.1145/1753846.1754181
+* gnōthi seauton
+* nTrack
+* track No1 (Zenobia top) (JNM top)
+
+
+Eric's Ideas
+* [something involving track lanes or swim lanes]
+* TrackRunner
+* AutoTrial (JNM likes) (Eric top)
+* TrialBySelf
+* TrialByOne
+* TRaCk
+
+
