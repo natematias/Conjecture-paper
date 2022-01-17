@@ -427,15 +427,17 @@ Participants diagnosed with colorblindness differed substantially in their avera
 
 After the baseline period ended and the randomized trial began, eighty percent of participants reported following the study instructions eighty percent of the time. Three participants completed the full study procedure. The two participants who completed the least of the study missed ten days out of twenty-eight.
 
-Overall
-
 \begin{figure}[h]
-\includegraphics[width=0.8\textwidth]{figures/trial.results.pdf}
+\includegraphics[width=0.6\textwidth]{figures/trial.results.pdf}
 \caption{95\% confidence intervals of the average treatment effects on screen time of turning one's screen grayscale, computed through non-parametric bootstrap methods.}
-    \label{fig:effect_minPerDay}
+    \label{fig:all.effects}
 \end{figure}
 
+Overall, no participant in the study observed a difference in daily screen time, on average, that was outside of the bootstrapped 95\% confidence intervals (Figure \ref{fig:all.effects}). Participants' differences in means between treatment and control ranged from (X) to (Y). If changing one's phone screen to grayscale does reduce anyone's screen time on average, this study was unable to observe the effect.
 
+We did observe patterns in this study that could guide further directions for individual and collective research on screen time. On average, people diagnosed with colorblindness spent more minutes per day on their screens in the baseline condition. Furthermore, the majority of participants with a negative difference in means were people diagnosed with colorblindness. The number of participants in this small study cannot offer reliable between-participant conclusions about colorblindness and screen time. Yet researchers  working in a cycle between individual case studies and between-subjects research (as suggested by Johannes et al), these findings could prompt further empirical investigation. If colorful phone designs do cause people to spend hours more per week on their phones per day due to correctable problems with phone interfaces, these accessibility problems could be a serious collective problem that needs to be addressed.
+
+%Especially in research where, null effects can be beneficial discoveries, 
 % Observer effects constitute one substantial risk to $N$-of-one trials. Observer effects occur when the experience of the experiment itself changes people's behavior, independently from the intervention. To investigate possible observer effects in the Conjecture system, we asked participants to collect one week of baseline data before starting random assignment. In a random intercepts interrupted timeseries regression model, we found that participants spent 29 more minutes on their phones during the baseline period, on average, than 
 
 \subsection{Learning about $N$-of-one trials from the Gray Phone Challenge}
